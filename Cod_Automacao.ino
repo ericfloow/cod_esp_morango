@@ -57,9 +57,11 @@ void loop() {
   Firebase.setInt("/Temperatura", temperatura); // Envia a temperatura para o banco de dados Firebase
 
   // Leitura da luminosidade com o LDR
-  int luminosidade = analogRead(ldr); // Lê o valor analógico do LDR
+  int lumi = analogRead(ldr); // Lê o valor analógico do LDR
+  int luminosidade = map(lumi, 4095, 0, 0, 100); // Mapeia o valor da luminosidade
   Serial.print("Valor do sensor de luminosidade = "); // Imprime uma mensagem informativa
   Serial.println(luminosidade);  // Imprime o valor da luminosidade lida
+  Serial.println("%"); // Imprime o símbolo de porcentagem
   Firebase.setInt("/Luminosidade", luminosidade); // Envia a luminosidade para o banco de dados Firebase
 
   // Leitura da umidade do solo
