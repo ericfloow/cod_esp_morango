@@ -13,11 +13,14 @@
 OneWire oneWire(26); // Cria uma instância da biblioteca OneWire para o pino 26 (DS18B20)
 DallasTemperature sensors(&oneWire); // Cria uma instância da biblioteca DallasTemperature para uso com sensores DS18B20
 
-int motorAbre = 5; // Define o pino para o motor DC que abre a estufa
-int motorFecha = 23; // Define o pino para o motor DC que fecha a estufa
-int bombaqua = 14; // Define o pino para a bomba de água
-int ldr = 34; // Define o pino para o sensor de luminosidade (LDR)
+const int motorAbre = 5; // Define o pino para o motor DC que abre a estufa
+const int motorFecha = 23; // Define o pino para o motor DC que fecha a estufa
+const int bombaqua = 14; // Define o pino para a bomba de água
+const int ldr = 34; // Define o pino para o sensor de luminosidade (LDR)
 const int umid = 39; // Define o pino para o sensor de umidade do solo
+
+const int ledVerde = 18;  // Pino do LED verde
+const int ledVermelho = 19;  // Pino do LED vermelho 
 
 void setup() {
   Serial.begin(115200); // Inicializa a comunicação serial a uma taxa de 115200 bps
@@ -26,6 +29,8 @@ void setup() {
   // Inicialize o sensor de temperatura
   sensors.begin();
 
+  pinMode(ledVerde, OUTPUT); // Define o pindo do led verde como saída
+  pinMode(ledVermelho, OUTPUT); // Define o pindo do led vermelho como saída
   pinMode(motorAbre, OUTPUT); // Define o pino do motorAbre como saída
   pinMode(motorFecha, OUTPUT); // Define o pino do motorFecha como saída
   pinMode(bombaqua, OUTPUT); // Define o pino da bomba de água como saída
@@ -40,10 +45,14 @@ void setup() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD); // Inicia a conexão Wi-Fi com as credenciais definidas
   while(WiFi.status() != WL_CONNECTED){
     Serial.println("Conectando ao WiFi..."); // Imprime mensagem durante a conexão
+    digitalWrite(ledVerde, LOW); // Apaga o LED verde
+    digitalWrite(ledVermelho, HIGH); // Acende o LED vermelho
     delay(1000); // Espera 1 segundo antes de tentar novamente
   }
 
   Serial.println("WiFi conectado!"); // Imprime mensagem quando a conexão Wi-Fi é bem-sucedida
+  digitalWrite(ledVerde, HIGH); // Acende o LED verde
+  digitalWrite(ledVermelho, LOW); // Apaga o LED vermelho
 
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH); // Inicia a conexão com o banco de dados Firebase
 }
@@ -58,9 +67,9 @@ void loop() {
 
   // Leitura da luminosidade com o LDR
   int lumi = analogRead(ldr); // Lê o valor analógico do LDR
-  int luminosidade = map(lumi, 4095, 0, 0, 100); // Mapeia o valor da luminosidade
+  int luminosidade = map(lumi, 0, 4095, 0, 100); // Mapeia o valor da luminosidade
   Serial.print("Valor do sensor de luminosidade = "); // Imprime uma mensagem informativa
-  Serial.println(luminosidade);  // Imprime o valor da luminosidade lida
+  Serial.print(luminosidade);  // Imprime o valor da luminosidade lida
   Serial.println("%"); // Imprime o símbolo de porcentagem
   Firebase.setInt("/Luminosidade", luminosidade); // Envia a luminosidade para o banco de dados Firebase
 
