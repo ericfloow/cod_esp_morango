@@ -92,42 +92,59 @@ void loop() {
 
   // Setagem dos parâmetros
   bool temperaturaIdeal = (temperatura >= 13 && temperatura <= 26); // Verifica se a temperatura está na faixa ideal
-  bool valorL = (luminosidade >= 0); // Verifica se a luminosidade é maior ou igual a zero
+  bool valorL = (luminosidade >= 50); // Verifica se a luminosidade é maior ou igual a zero
 
   // Verificação dos parâmetros e controle dos atuadores
   if (modoManual) {
-    if (motorA && !estufaAberta || bomb) {
+    if (motorA && !estufaAberta) {
       // Botão de abrir pressionado manualmente
       digitalWrite(motorAbre, LOW); // Liga o motor DC para abrir
       delay(5000); // Aguarda por 5 segundos
       digitalWrite(motorAbre, HIGH); // Desliga o motor DC para abrir
       Serial.println("Estufa aberta manualmente"); // Imprime uma mensagem informativa
+      Firebase.setBool("/EstadoEstufa", true); // Atualiza o estado da estufa no Firebase
+      Firebase.setBool("/MotorOpen", false); // Atualiza o estado do motor de abertura no Firebase
+      Firebase.setBool("/MotorClose", false); // Atualiza o estado do motor de fechamento no Firebase
+      if (bomb){
       digitalWrite(bombaqua, LOW); // Liga a bomba de água
       delay(5000); // Aguarda por 5 segundos
       digitalWrite(bombaqua, HIGH); // Desliga a bomba de água
       Serial.println("Bomba da agua ligada manualmente"); // Imprime uma mensagem informativa
-      Firebase.setBool("/EstadoEstufa", true); // Atualiza o estado da estufa no Firebase
-      Firebase.setBool("/MotorOpen", false); // Atualiza o estado do motor de abertura no Firebase
-      Firebase.setBool("/MotorClose", false); // Atualiza o estado do motor de fechamento no Firebase
       Firebase.setBool("/Bombaqua", false); // Atualiza o estado da bomba de água no Firebase
+      }
     }
-    else if (motorF && estufaAberta || bomb) {
+    else if (motorF && estufaAberta) {
       // Botão de fechar pressionado manualmente
       digitalWrite(motorFecha, LOW); // Liga o motor DC para fechar
       delay(5000); // Aguarda por 5 segundos
       digitalWrite(motorFecha, HIGH); // Desliga o motor DC para fechar
       Serial.println("Estufa fechada manualmente"); // Imprime uma mensagem informativa
+      Firebase.setBool("/EstadoEstufa", false); // Atualiza o estado da estufa no Firebase
+      Firebase.setBool("/MotorOpen", false); // Atualiza o estado do motor de abertura no Firebase
+      Firebase.setBool("/MotorClose", false); // Atualiza o estado do motor de fechamento no Firebase
+      if (bomb){
       digitalWrite(bombaqua, LOW); // Liga a bomba de água
       delay(5000); // Aguarda por 5 segundos
       digitalWrite(bombaqua, HIGH); // Desliga a bomba de água
       Serial.println("Bomba da agua ligada manualmente"); // Imprime uma mensagem informativa
-      Firebase.setBool("/EstadoEstufa", false); // Atualiza o estado da estufa no Firebase
+      Firebase.setBool("/Bombaqua", false); // Atualiza o estado da bomba de água no Firebase
+      }
+    }
+    else if (bomb){
+      digitalWrite(bombaqua, LOW); // Liga a bomba de água
+      delay(5000); // Aguarda por 5 segundos
+      digitalWrite(bombaqua, HIGH); // Desliga a bomba de água
+      Serial.println("Bomba da agua ligada manualmente"); // Imprime uma mensagem informativa
+      Firebase.setBool("/Bombaqua", false); // Atualiza o estado da bomba de água no Firebase
+    }
+    else {
       Firebase.setBool("/MotorOpen", false); // Atualiza o estado do motor de abertura no Firebase
       Firebase.setBool("/MotorClose", false); // Atualiza o estado do motor de fechamento no Firebase
       Firebase.setBool("/Bombaqua", false); // Atualiza o estado da bomba de água no Firebase
     }
   }
-  else {
+  
+  if (!modoManual) {
     if (valorL && temperaturaIdeal && !estufaAberta) {
       // Botão de abrir pressionado manualmente ou condição de temperatura para abrir
       digitalWrite(motorAbre, LOW); // Liga o motor DC para abrir
@@ -147,8 +164,6 @@ void loop() {
       Firebase.setBool("/MotorClose", false); // Atualiza o estado do motor de fechamento no Firebase
     }
     else {
-      digitalWrite(motorAbre, HIGH); // Desliga o motor DC de abrir
-      digitalWrite(motorFecha, HIGH); // Desliga o motor DC de fechar
       Serial.println("Motor da estufa desligado"); // Imprime uma mensagem informativa
       Firebase.setBool("/MotorOpen", false); // Atualiza o estado do motor de abertura no Firebase
       Firebase.setBool("/MotorClose", false); // Atualiza o estado do motor de fechamento no Firebase
@@ -164,11 +179,10 @@ void loop() {
       digitalWrite(bombaqua, HIGH); // Desliga a bomba de água
       Serial.println("Bomba da agua ligada"); // Imprime uma mensagem informativa
       Firebase.setBool("/Bombaqua", false); // Atualiza o estado da bomba de água no Firebase
-  } 
+    }
     else {
       digitalWrite(bombaqua, HIGH); // Desliga a bombaqua
       Serial.println("Bomba da agua desligada"); // Imprime uma mensagem informativa
     }
   }
-  delay(5000); // Intervalo de leitura dos sensores
 }
