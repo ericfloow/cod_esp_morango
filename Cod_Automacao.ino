@@ -20,7 +20,7 @@ const int ldr = 34; // Define o pino para o sensor de luminosidade (LDR)
 const int umid = 39; // Define o pino para o sensor de umidade do solo
 
 const int ledVerde = 18;  // Pino do LED verde
-const int ledVermelho = 19;  // Pino do LED vermelho 
+const int ledVermelho = 19;  // Pino do LED vermelho
 
 void setup() {
   Serial.begin(115200); // Inicializa a comunicação serial a uma taxa de 115200 bps
@@ -75,7 +75,7 @@ void loop() {
 
   // Leitura da umidade do solo
   int umidadeSolo = analogRead(umid); // Lê o valor analógico do sensor de umidade do solo
-  int umidade = map(umidadeSolo, 4095, 0, 0, 100); // Mapeia o valor da umidade
+  int umidade = map(umidadeSolo, 0, 4095, 100, 0); // Mapeia o valor da umidade
   Serial.print("Valor sensor de umidade do solo = "); // Imprime uma mensagem informativa
   Serial.print(umidade); // Imprime o valor da umidade lida
   Serial.println("%"); // Imprime o símbolo de porcentagem
@@ -99,7 +99,7 @@ void loop() {
     if (motorA && !estufaAberta) {
       // Botão de abrir pressionado manualmente
       digitalWrite(motorAbre, LOW); // Liga o motor DC para abrir
-      delay(5000); // Aguarda por 5 segundos
+      delay(400); // Aguarda por 5 segundos
       digitalWrite(motorAbre, HIGH); // Desliga o motor DC para abrir
       Serial.println("Estufa aberta manualmente"); // Imprime uma mensagem informativa
       Firebase.setBool("/EstadoEstufa", true); // Atualiza o estado da estufa no Firebase
@@ -116,7 +116,7 @@ void loop() {
     else if (motorF && estufaAberta) {
       // Botão de fechar pressionado manualmente
       digitalWrite(motorFecha, LOW); // Liga o motor DC para fechar
-      delay(5000); // Aguarda por 5 segundos
+      delay(400); // Aguarda por 5 segundos
       digitalWrite(motorFecha, HIGH); // Desliga o motor DC para fechar
       Serial.println("Estufa fechada manualmente"); // Imprime uma mensagem informativa
       Firebase.setBool("/EstadoEstufa", false); // Atualiza o estado da estufa no Firebase
@@ -137,18 +137,13 @@ void loop() {
       Serial.println("Bomba da agua ligada manualmente"); // Imprime uma mensagem informativa
       Firebase.setBool("/Bombaqua", false); // Atualiza o estado da bomba de água no Firebase
     }
-    else {
-      Firebase.setBool("/MotorOpen", false); // Atualiza o estado do motor de abertura no Firebase
-      Firebase.setBool("/MotorClose", false); // Atualiza o estado do motor de fechamento no Firebase
-      Firebase.setBool("/Bombaqua", false); // Atualiza o estado da bomba de água no Firebase
-    }
   }
   
   if (!modoManual) {
     if (valorL && temperaturaIdeal && !estufaAberta) {
       // Botão de abrir pressionado manualmente ou condição de temperatura para abrir
       digitalWrite(motorAbre, LOW); // Liga o motor DC para abrir
-      delay(5000); // Aguarda por 5 segundos
+      delay(400); // Aguarda por 5 segundos
       digitalWrite(motorAbre, HIGH); // Desliga o motor DC para abrir
       Serial.println("Estufa aberta");  // Imprime uma mensagem informativa
       Firebase.setBool("/EstadoEstufa", true); // Atualiza o estado da estufa no Firebase
@@ -157,7 +152,7 @@ void loop() {
     else if ((!temperaturaIdeal || !valorL) && estufaAberta) {
       // Botão de fechar pressionado manualmente ou condição de temperatura para fechar
       digitalWrite(motorFecha, LOW); // Liga o motor DC para fechar
-      delay(5000); // Aguarda por 5 segundos
+      delay(400); // Aguarda por 5 segundos
       digitalWrite(motorFecha, HIGH); // Desliga o motor DC para fechar
       Serial.println("Estufa fechada"); // Imprime uma mensagem informativa
       Firebase.setBool("/EstadoEstufa", false); // Atualiza o estado da estufa no Firebase
@@ -172,8 +167,8 @@ void loop() {
 
   if (!modoManual){
     // Defina um valor de umidade ideal para irrigação
-    int umidadeIdeal = 70;  // Define o valor ideal de umidade
-    if (umidade < umidadeIdeal || bomb) {
+    int umidadeIdeal = 60;  // Define o valor ideal de umidade
+    if (umidade < umidadeIdeal) {
       digitalWrite(bombaqua, LOW); // Liga a bomba de água
       delay(5000); // Aguarda por 5 segundos
       digitalWrite(bombaqua, HIGH); // Desliga a bomba de água
