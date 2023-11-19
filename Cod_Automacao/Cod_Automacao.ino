@@ -4,8 +4,8 @@
 #include <OneWire.h> // Inclui a biblioteca OneWire para uso com DS18B20
 #include <DallasTemperature.h> // Inclui a biblioteca DallasTemperature para uso com sensores de temperatura DS18B20
 
-#define WIFI_SSID "Bernardo_WiFi" // Define o nome da rede Wi-Fi
-#define WIFI_PASSWORD "001234500" // Define a senha da rede Wi-Fi
+#define WIFI_SSID "SEU_USUARIO_WIFI" // Define o nome da rede Wi-Fi
+#define WIFI_PASSWORD "SUA_SENHA_WIFI" // Define a senha da rede Wi-Fi
 #define FIREBASE_HOST "https://test-codmorango-default-rtdb.firebaseio.com/" // Define a senha da rede Wi-Fi
 #define FIREBASE_AUTH "ug99JgW7nJXjDwoPTminNukogqaeGVAjMQz7MN70" // Define a chave de autenticação do Firebase
 
@@ -75,7 +75,7 @@ void loop() {
 
   // Leitura da umidade do solo
   int umidadeSolo = analogRead(umid); // Lê o valor analógico do sensor de umidade do solo
-  int umidade = map(umidadeSolo, 0, 4095, 100, 0); // Mapeia o valor da umidade
+  int umidade = map(umidadeSolo, 1600, 4095, 100, 0); // Mapeia o valor da umidade
   Serial.print("Valor sensor de umidade do solo = "); // Imprime uma mensagem informativa
   Serial.print(umidade); // Imprime o valor da umidade lida
   Serial.println("%"); // Imprime o símbolo de porcentagem
@@ -92,7 +92,7 @@ void loop() {
 
   // Setagem dos parâmetros
   bool temperaturaIdeal = (temperatura >= 13 && temperatura <= 26); // Verifica se a temperatura está na faixa ideal
-  bool valorL = (luminosidade >= 50); // Verifica se a luminosidade é maior ou igual a zero
+  bool valorL = (luminosidade >= 50); // Verifica se a luminosidade é maior ou igual a cinquenta
 
   // Verificação dos parâmetros e controle dos atuadores
   if (modoManual) {
