@@ -167,7 +167,7 @@ void loop() {
 
   if (!modoManual){
     // Defina um valor de umidade ideal para irrigação
-    int umidadeIdeal = 60;  // Define o valor ideal de umidade
+    int umidadeIdeal = 70;  // Define o valor ideal de umidade
     if (umidade < umidadeIdeal) {
       digitalWrite(bombaqua, LOW); // Liga a bomba de água
       delay(5000); // Aguarda o tempo
